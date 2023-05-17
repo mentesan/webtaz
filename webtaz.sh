@@ -4,14 +4,14 @@
 
 # Config options
 #PROXY=""
-PROXY="127.0.0.1:8082"
+PROXY="127.0.0.1:8082"  # Levave it blank if not used
 USE_PROXY="true"
 USE_PROXY_CHAINS="true"
 PENTESTER_URL="https://evil.com"
 USER_AGENT="Mozilla/5.0"
 TRACEROUTE_PORT=443
 TRACEROUTE_MAX_PKTS=10
-SHCHECK_BIN="/home/micron/.local/bin/shcheck.py"
+SHCHECK_BIN="/home/micron/.local/bin/shcheck.py" # pip install shcheck
 WAPITI_OUTPUT_FMT="html"
 WAPITI_COOKIE_FILE="cookie.txt"
 NUCLEI_BIN="/home/micron/go/bin/nuclei"
@@ -378,6 +378,7 @@ get_technologies
 fetch_urls
 check_cors
 check_crlf
+# Prototype Pollution
 check_pp
 run_wapiti
 run_nuclei
