@@ -19,26 +19,26 @@ Proper execution:
 ```
 Not recommended execution
 ```
-./webtaz.sh -t site.domain.com -d otherdom.com   ### Not anticipated behavior...
+./webtaz.sh -t site.domain.com -d otherdom.com   ### No anticipated behavior...
 ```
-There's an "-i" option for passing just target IP address but it's not tested for the time being.
+There's an "-i" option for passing target IP address but it's not tested for the time being.
 
 # Dependencies
-The script rely on system and external tools to properly execute, at this moment there's no proper check for availability on the system, it's a TODO feature with some other important improvements, check TODO file for more information.
+The script rely on system and external tools to do it's job, at this moment there's no proper check for availability of needed tools on the system, it's a TODO feature with some other important improvements, check TODO file for more information.
 
-Some tools are available in Kali Linux or other pentesting Linux distro, some you'll need to install from github, links provided bellow.
+Some tools are available in Kali Linux and other pentesting Linux distros, some you'll need to install from github, links are provided bellow.
 
 # DNS and route mapping
 * [dig](https://github.com/tigeli/bind-utils) for direct ip resolution and nameservers mapping
-* [whois](https://github.com/rfc1036/whois) summay information.
+* [whois](https://github.com/rfc1036/whois) summay information
 * [hping3](https://github.com/antirez/hping/tree/master) for traceroute via TCP port
 
 # Technologies discovery
 * [wafw00f](https://github.com/EnableSecurity/wafw00f) to identify WAF systems
-* [whatweb](https://github.com/urbanadventurer/WhatWeb) to discover site technologies.
+* [whatweb](https://github.com/urbanadventurer/WhatWeb) to discover site technologies
 
 # Network and services
-* [nmap](https://nmap.org) detect open ports (-sT), then proceed to verify eatch port, if it listens HTTP the command is customized.
+* [nmap](https://nmap.org) detect open ports (-sT), then proceed to verify eatch port, if it listens HTTP the command is customized
 
 # SSL
 * [sslyze](https://github.com/nabla-c0d3/sslyze)
@@ -64,7 +64,7 @@ cargo install spider_cli
 * [nuclei](https://github.com/projectdiscovery/nuclei)
 
 # Configuration
-In the header of the script there are some variables to edit so it runs properly.
+In the script header there are some important variables to edit, so it runs properly.
 
 Some of them may seem redundant, but it's an early release ;)
 
@@ -75,7 +75,9 @@ PROXY="127.0.0.1:8082"
 USE_PROXY="true"
 USE_PROXY_CHAINS="true"
 ```
-* /etc/proxychains.conf -> Because we will use nmap with SUDO
+* /etc/proxychains.conf
+--> Because we will use nmap with SUDO.
+
 Minimal proxychains for use with ZAP and/or BurpSuite.
 
 Remember to add the found HTTP IPs to ZAP Scope!
@@ -88,6 +90,7 @@ Remember to add the found HTTP IPs to ZAP Scope!
 # ---
 ```
 ## URL to use on some payloads
+Ex: CORS check.
 ```
 PENTESTER_URL="https://evil.com"
 ```
@@ -96,10 +99,10 @@ Maybe implement random user agent in the future, for now just put it here.
 ```
 USER_AGENT="Mozilla/5.0"
 ```
-## TCP port to use for "hping3" traceroute
-Specify here, we can automate it, but as we are doing a "web pentest", it's a good default.
+## TCP port for "hping3" traceroute
+We can automate it, but as we are doing a "web pentest", it's a good default.
 
-Also, specify "max pkts" which is kind of "max hops", so it'll not hang too much.
+Also, specify "max pkts" which is kind of "max hops", so it not hangs too much.
 ```
 TRACEROUTE_PORT=443
 TRACEROUTE_MAX_PKTS=10
@@ -107,7 +110,7 @@ TRACEROUTE_MAX_PKTS=10
 ## Headers check
 shcheck.py you cann install with "pip install shcheck"
 ```
-  SHCHECK_BIN="/home/micron/.local/bin/shcheck.py"
+SHCHECK_BIN="/home/micron/.local/bin/shcheck.py"
 ```
 ## Wapiti
 Output format and cookie file, this cookie var probably will change in future releases and used with other tools.
@@ -127,8 +130,8 @@ LOG_DIR_PREFIX="/outputs/"
 ```
 
 # Know caveats
-* Some tools work with proxychains, others work with ZAP and BurpSuite Chained, others just with BurpSuite
-* Unfortunately I couldn't get some tools to work with proxy, some may not make sense like SSL and Waf checks
+* Some tools work with proxychains, others work with ZAP and BurpSuite Chained, others just with BurpSuite, other with own options (-p, --proxy)
+* Unfortunately I couldn't get some tools to work witha any proxy yet, some may not make sense like SSL and Waf checks
 
 # Contributing
 Fell free to sugest features, improvements and tips.
