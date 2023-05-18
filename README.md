@@ -3,11 +3,11 @@
 
 A web pentest kickstarter.
 
-It's a simple script that executes tools and record their execution in separate files, some of them you suitable to import on [Faraday](https://faradaysec.com), [Dradis](https://dradisframework.com/ce/), [PCF](https://gitlab.com/invuls/pentest-projects/pcf), etc.
+It's a simple script that executes tools and record their execution in separate files, some of them suitable to import on [Faraday](https://faradaysec.com), [Dradis](https://dradisframework.com/ce/), [PCF](https://gitlab.com/invuls/pentest-projects/pcf), etc.
 
 It aims to be simple and readable rather than fancy, so it can be easily understood and extended.
 
-The script saves ouput from commands so if for some reason you get erros with some steps you can run it again without executing all steps again. It kind of "save state" for executed commands so to speak...
+The script saves ouput from commands so if for some reason you get erros on some steps it can be executed again without goint through all steps. It kind of "save state" for executed commands so to speak...
 
 # What it does
 Given de DNS site name and domain, it runs tools against them, taking a web pentest starter approach.
@@ -25,14 +25,16 @@ Not recommended execution
 There's an "-i" option for passing target IP address but it's not tested for the time being.
 
 # Dependencies
-The script rely on system and external tools to do it's job, at this moment there's no proper check for availability of needed tools on the system, it's a TODO feature with some other important improvements, check TODO file for more information.
+It relies on system and external tools to do it's job, at this moment there's no proper check for availability of needed tools on the system, it's a TODO feature with some other important improvements, check TODO file for more information.
 
 Some tools are available in Kali Linux and other pentesting Linux distros, some you'll need to install from github, links are provided bellow.
 
+By the end of the script you can comment some "steps" if needed.
+
 # DNS and route mapping
-* [dig](https://github.com/tigeli/bind-utils) for direct ip resolution and nameservers mapping
-* [whois](https://github.com/rfc1036/whois) summay information
-* [hping3](https://github.com/antirez/hping/tree/master) for traceroute via TCP port
+* [dig](https://github.com/tigeli/bind-utils) direct ip resolution and nameserver mapping
+* [whois](https://github.com/rfc1036/whois) summary information
+* [hping3](https://github.com/antirez/hping/tree/master) traceroute via TCP port
 
 # OSINT
 * [theHarvester](https://github.com/laramies/theHarvester/)

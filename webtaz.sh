@@ -401,7 +401,6 @@ check_pp
 run_wapiti
 #run_nikto
 #run_cewl
-#run_sqlmap
 #run_commix
 #run_xss
 #run_skipfish
