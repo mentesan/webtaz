@@ -27,7 +27,7 @@ There's an "-i" option for passing target IP address but it's not tested for the
 # Dependencies
 It relies on system and external tools to do it's job, at this moment there's no proper check for availability of needed tools on the system, it's a TODO feature with some other important improvements, check TODO file for more information.
 
-Some tools are available in Kali Linux and other pentesting Linux distros, some you'll need to install from github, links are provided bellow.
+Some tools are available on Kali Linux and other pentesting Linux distros, some you'll need to install from github, links are provided bellow.
 
 By the end of the script you can comment some "steps" if needed.
 
@@ -133,8 +133,8 @@ LOG_DIR_PREFIX="/outputs/"
 ```
 
 # Know caveats
-* Some tools work with proxychains, others work with ZAP and BurpSuite Chained, others just with BurpSuite, other with own options (-p, --proxy)
-* Unfortunately I couldn't get some tools to work witha any proxy yet, some may not make sense like SSL and Waf checks
+* Some tools work with proxychains, others work with ZAP and BurpSuite Chained, others just with BurpSuite, others with own options (-p, --proxy)
+* Unfortunately I couldn't get some tools to work with any proxy yet, some may not make sense like SSL and Waf checks
 
 # Contributing
 Fell free to sugest features, improvements and tips.
