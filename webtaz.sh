@@ -148,18 +148,6 @@ hping_traceroute() {
     echo "--"
 }
 
-check_waf() {
-    echo -e "Checking waf\n----------"
-    WAF_FILE="${LOG_DIR}/waf.txt"
-    if [ -s $WAF_FILE ]; then
-        echo -e "Skipping waf analysis, file already exists:\n-"
-    else
-        wafw00f $DNS_NAME > $WAF_FILE
-    fi
-    cat $WAF_FILE
-    echo "--"
-}
-
 run_nmap() {
     echo "Nmap Scan"
     echo "Using sudo to execute nmap privileged operations..."
@@ -246,7 +234,7 @@ check_headers() {
 }
 
 get_technologies() {
-    # Watweb
+    # whatweb
     echo "Getting web techonologies used"
     WHATWEB_FILE="${LOG_DIR}/whatweb.txt"
     if [ -s $WHATWEB_FILE ]; then
@@ -255,6 +243,27 @@ get_technologies() {
        whatweb -v -color=always --user-agent "$USER_AGENT" --no-errors https://$DNS_NAME > $WHATWEB_FILE
     fi
     cat $WHATWEB_FILE
+    echo "--"
+
+    # cdncheck
+    echo -e "Running cdncheck\n--"
+    CDNCHECK_FILE="${LOG_DIR}/cdncheck.txt"
+    if [ -s $CDNCHECK_FILE ]; then
+        echo -e "Skipping cdncheck, file already exists:\n-"
+    else
+        cat $SUBDOMAIN_FILE | cdncheck -resp --silent -o $CDNCHECK_FILE
+    fi
+    echo "--"
+
+    # wafw00f
+    echo -e "Checking waf\n----------"
+    WAF_FILE="${LOG_DIR}/waf.txt"
+    if [ -s $WAF_FILE ]; then
+        echo -e "Skipping waf analysis, file already exists:\n-"
+    else
+        wafw00f $DNS_NAME > $WAF_FILE
+    fi
+    cat $WAF_FILE
     echo "--"
 }
 
@@ -280,7 +289,8 @@ fetch_urls() {
 
 }
 
-check_cors() {
+check_vulns() {
+    # CORS
     # Based on https://github.com/kleiton0x00/CORS-one-liner
     echo -e "Checkinf for CORS on FETCHED_URLS\n-"
     CORS_FILE="${LOG_DIR}/cors.txt"
@@ -299,9 +309,8 @@ check_cors() {
     fi
     cat $CORS_FILE
     echo "--"
-}
 
-check_crlf() {
+    # CRLF
     # Based on https://github.com/kleiton0x00/CRLF-one-liner
     echo -e "Checking for Carriage Return Line Feed (CRLF)"
     CRLF_FILE="${LOG_DIR}/crlf.txt"
@@ -320,9 +329,8 @@ check_crlf() {
     fi
     cat $CRLF_FILE
     echo "--"
-}
 
-check_pp() {
+    # Prototype Pollution
     # https://github.com/kleiton0x00/ppmap
     echo -e "Checking for Prototype Pollution"
     PP_FILE="${LOG_DIR}/prototype_pollution.txt"
@@ -355,19 +363,8 @@ run_wapiti() {
     fi
 }
 
-run_nuclei() {
-    echo -e "Running nuclei\n--"
-    NUCLEI_FILE="${LOG_DIR}/nuclei.txt"
-    if [ -s $NUCLEI_FILE ]; then
-        echo -e "Skipping nuclei execution, file already exists:\n-"
-        cat $NUCLEI_FILE
-    else
-        $NUCLEI_BIN -t http,ssl,misconfiguration,vulnerabilities,cves,file -u $DNS_NAME -o $NUCLEI_FILE
-    fi
-    echo "--"
-}
-
-run_theharvester() {
+check_osint() {
+    # theHarvester
     echo -e "theHarvester OSINT tool.\nYou can configure api keys in /etc/theHarvester/api-keys.yaml to increase coverage...\n--"
     HARVESTER_FILE="${LOG_DIR}/theHarvester.json"
     HARVESTER_SOURCES="anubis,baidu,bevigil,binaryedge,bing,bingapi,bufferoverun,censys,certspotter,crtsh,dnsdumpster,duckduckgo,fullhunt,github-code,hackertarget,hunter,intelx,omnisint,otx,pentesttools,projectdiscovery,qwant,rapiddns,rocketreach,securityTrails,sublist3r,threatcrowd,threatminer,urlscan,virustotal,yahoo,zoomeye"
@@ -380,24 +377,42 @@ run_theharvester() {
         $HARVESTER_CMD
     fi
     echo "--"
+
+    # nuclei
+    echo -e "Running nuclei\n--"
+    NUCLEI_FILE="${LOG_DIR}/nuclei.txt"
+    if [ -s $NUCLEI_FILE ]; then
+        echo -e "Skipping nuclei execution, file already exists:\n-"
+        cat $NUCLEI_FILE
+    else
+        $NUCLEI_BIN -t http,ssl,misconfiguration,vulnerabilities,cves,file -u $DNS_NAME -o $NUCLEI_FILE
+    fi
+    echo "--"
+}
+
+subdomain_map() {
+    echo -e "Subdomain mapping\n--"
+    SUBDOMAIN_FILE="${LOG_DIR}/subdomains.txt"
+    if [ -s $SUBDOMAIN_FILE ]; then
+        echo -e "Skipping subdomain mapping, file already exists:\n-"
+        cat $SUBDOMAIN_FILE
+    else
+        subfinder --silent -d $DOMAIN -o $SUBDOMAIN_FILE
+    fi
+    echo "--"
 }
 
 dns_lookup
 whois_lookup
-#run_dnsrecon
 hping_traceroute
-run_theharvester
-run_nuclei
-check_waf
+check_osint
+subdomain_map
+get_technologies
 run_nmap
 check_ssl
 check_headers
-get_technologies
 fetch_urls
-check_cors
-check_crlf
-# Prototype Pollution
-check_pp
+check_vulns
 run_wapiti
 #run_nikto
 #run_cewl
