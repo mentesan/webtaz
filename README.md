@@ -132,8 +132,8 @@ Just the prefix, something like "./reports" "../webtaz" "/home/user/work/webtaz"
 LOG_DIR_PREFIX="outputs/"
 ```
 
-# Know caveats
-* Some tools work with proxychains, others work with ZAP and BurpSuite Chained, others just with BurpSuite, others with own options (-p, --proxy)
+# Known caveats
+* Some tools work with proxychains, others work with ZAP and BurpSuite chained, others just with BurpSuite, others with own options (-p, --proxy)
 * Unfortunately I couldn't get some tools to work with any proxy yet, some may not make sense like SSL and Waf checks
 
 # Contributing
