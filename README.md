@@ -58,7 +58,7 @@ By the end of the script you can comment some "steps" if needed.
 cargo install spider_cli
 ```
 
-# Vulnerabilities check
+# Vulnerabity check
 * [one liner cors check](https://github.com/kleiton0x00/CORS-one-liner)
 * [one liner crlf check](https://github.com/kleiton0x00/CRLF-one-liner)
 * [ppmap](https://github.com/kleiton0x00/ppmap) search for prototype pollution flaws
