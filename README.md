@@ -1,3 +1,4 @@
+![webtaz](webtaz.jpg)
 # webtaz.sh
 
 A web pentest kickstarter.
