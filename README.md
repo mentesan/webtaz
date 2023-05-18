@@ -129,7 +129,7 @@ NUCLEI_BIN="/home/micron/go/bin/nuclei"
 ## Output directory
 Just the prefix, something like "./reports" "../webtaz" "/home/user/work/webtaz"
 ```
-LOG_DIR_PREFIX="/outputs/"
+LOG_DIR_PREFIX="outputs/"
 ```
 
 # Know caveats
