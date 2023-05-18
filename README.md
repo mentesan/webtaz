@@ -33,6 +33,10 @@ Some tools are available in Kali Linux and other pentesting Linux distros, some 
 * [whois](https://github.com/rfc1036/whois) summay information
 * [hping3](https://github.com/antirez/hping/tree/master) for traceroute via TCP port
 
+# OSINT
+* [theHarvester](https://github.com/laramies/theHarvester/)
+* [nuclei](https://github.com/projectdiscovery/nuclei)
+
 # Technologies discovery
 * [wafw00f](https://github.com/EnableSecurity/wafw00f) to identify WAF systems
 * [whatweb](https://github.com/urbanadventurer/WhatWeb) to discover site technologies
@@ -58,9 +62,6 @@ cargo install spider_cli
 
 # Web scanners
 * [wapiti](https://github.com/wapiti-scanner/wapiti)
-* [nuclei](https://github.com/projectdiscovery/nuclei)
-
-# OSINT
 * [nuclei](https://github.com/projectdiscovery/nuclei)
 
 # Configuration
@@ -119,7 +120,6 @@ WAPITI_OUTPUT_FMT="html"
 WAPITI_COOKIE_FILE="cookie.txt"
 ```
 ## Nuclei
-
 ```
 NUCLEI_BIN="/home/micron/go/bin/nuclei"
 ```

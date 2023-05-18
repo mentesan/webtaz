@@ -32,6 +32,7 @@ LOG_DIR_PREFIX="../outputs/"
 # Also, remember to add the found HTTP IPs to the ZAP Scope!
 #
 #
+JQ_BIN=$(which jq) || JQ_BIN="false"
 LOG_DIR="${LOG_DIR_PREFIX}$(basename ${0} | sed 's/.sh//')" && mkdir -p ${LOG_DIR}
 # Start clean
 NO_ARGS=0
@@ -344,13 +345,13 @@ run_wapiti() {
         echo "Skipping Wapiti execution, output file/dir exists"
         echo "delete the file or directory $WAPITI_FILE to run again."
     else
-        WAPITI_LINE="wapiti --scope folder -S normal --color -d 10 -o $WAPITI_FILE \
+        WAPITI_CMD="wapiti --scope folder -S normal --color -d 10 -o $WAPITI_FILE \
                      -f $WAPITI_OUTPUT_FMT -u https://${DNS_NAME}/"
         # Setting proxy
-        [ $USE_PROXY == "true" ] && WAPITI_LINE="$WAPITI_LINE -p http://${PROXY}"
+        [ $USE_PROXY == "true" ] && WAPITI_CMD="$WAPITI_CMD -p http://${PROXY}"
         # Setting cookie
-        [ $WAPITI_COOKIE_FILE != "" ] && WAPITI_LINE="$WAPITI_LINE -c $WAPITI_COOKIE_FILE"
-        $WAPITI_LINE
+        [ $WAPITI_COOKIE_FILE != "" ] && WAPITI_CMD="$WAPITI_CMD -c $WAPITI_COOKIE_FILE"
+        $WAPITI_CMD
     fi
 }
 
@@ -366,10 +367,27 @@ run_nuclei() {
     echo "--"
 }
 
+run_theharvester() {
+    echo -e "theHarvester OSINT tool.\nYou can configure api keys in /etc/theHarvester/api-keys.yaml to increase coverage...\n--"
+    HARVESTER_FILE="${LOG_DIR}/theHarvester.json"
+    HARVESTER_SOURCES="anubis,baidu,bevigil,binaryedge,bing,bingapi,bufferoverun,censys,certspotter,crtsh,dnsdumpster,duckduckgo,fullhunt,github-code,hackertarget,hunter,intelx,omnisint,otx,pentesttools,projectdiscovery,qwant,rapiddns,rocketreach,securityTrails,sublist3r,threatcrowd,threatminer,urlscan,virustotal,yahoo,zoomeye"
+    HARVESTER_CMD="theHarvester -d $DOMAIN -n -c -r -f $HARVESTER_FILE -b $HARVESTER_SOURCES"
+
+    if [ -s $HARVESTER_FILE ]; then
+        echo -e "Skipping theHarvester execution, file already exists:\n-"
+        [[ $JQ_BIN == "false" ]] && cat $HARVESTER_FILE || cat $HARVESTER_FILE | jq
+    else
+        $HARVESTER_CMD
+    fi
+    echo "--"
+}
+
 dns_lookup
 whois_lookup
 #run_dnsrecon
 hping_traceroute
+run_theharvester
+run_nuclei
 check_waf
 run_nmap
 check_ssl
@@ -381,8 +399,6 @@ check_crlf
 # Prototype Pollution
 check_pp
 run_wapiti
-run_nuclei
-#run_theharvester
 #run_nikto
 #run_cewl
 #run_sqlmap
