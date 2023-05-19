@@ -1,5 +1,5 @@
+![webtaz.sh](webtaz.png)
 # webtaz.sh
-[webtaz.sh](#webtazsh)
 - [What it does](#what-it-does)
 - [Dependencies](#dependencies)
 - [DNS and route mapping](#dns-and-route-mapping)
