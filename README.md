@@ -1,5 +1,5 @@
 ![webtaz](webtaz.png)
-- [webtaz.sh](#webtazsh)
+[webtaz.sh](#webtazsh)
 - [What it does](#what-it-does)
 - [Dependencies](#dependencies)
 - [DNS and route mapping](#dns-and-route-mapping)
@@ -24,7 +24,7 @@
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
-
+# webtaz.sh
 A web pentest kickstarter.
 
 It's a simple script that executes tools and record their execution in separate files, some of them suitable to import on [Faraday](https://faradaysec.com), [Dradis](https://dradisframework.com/ce/), [PCF](https://gitlab.com/invuls/pentest-projects/pcf), etc.
