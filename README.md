@@ -1,5 +1,29 @@
 ![webtaz](webtaz.png)
-# webtaz.sh
+- [webtaz.sh](#webtazsh)
+- [What it does](#what-it-does)
+- [Dependencies](#dependencies)
+- [DNS and route mapping](#dns-and-route-mapping)
+- [OSINT](#osint)
+- [Technologies discovery](#technologies-discovery)
+- [Network and services](#network-and-services)
+- [SSL](#ssl)
+- [URL and path discovery](#url-and-path-discovery)
+- [Vulnerabity check](#vulnerabity-check)
+- [Web scanners](#web-scanners)
+- [Configuration](#configuration)
+  * [Proxy config](#proxy-config)
+  * [URL to use on some payloads](#url-to-use-on-some-payloads)
+  * [USER Agent to use](#user-agent-to-use)
+  * [TCP port for "hping3" traceroute](#tcp-port-for--hping3--traceroute)
+  * [Headers check](#headers-check)
+  * [Wapiti](#wapiti)
+  * [Nuclei](#nuclei)
+  * [Output directory](#output-directory)
+- [Known caveats](#known-caveats)
+- [Contributing](#contributing)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
 
 A web pentest kickstarter.
 
