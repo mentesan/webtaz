@@ -52,7 +52,7 @@ It relies on system and external tools to do it's job, at this moment there's no
 
 Some tools are available on Kali Linux and other pentesting Linux distros, some you'll need to install from github, links are provided bellow.
 
-By the end of the script you can comment some "steps" if needed.
+By the end of the script you can comment/disable some "steps" if needed.
 
 # DNS and route mapping
 * [dig](https://github.com/tigeli/bind-utils) direct ip resolution and nameserver mapping
