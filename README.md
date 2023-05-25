@@ -127,9 +127,9 @@ Maybe implement random user agent in the future, for now just put it here.
 USER_AGENT="Mozilla/5.0"
 ```
 ## TCP port for "hping3" traceroute
-We can automate it, but as we are doing a "web pentest", it's a good default.
+We can automate it, but as we are doing a "web pentest", 443/TCP is a good default.
 
-Also, specify "max pkts" which is kind of "max hops", so it not hangs too much.
+Also, specify "max pkts" which is kind of "max hops", so it does not hang for a long time.
 ```
 TRACEROUTE_PORT=443
 TRACEROUTE_MAX_PKTS=10
