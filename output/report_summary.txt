@@ -1,0 +1,10 @@
+=== WEBTAZ - EXECUTION SUMMARY ===
+Date: sex  6 fev 2026 16:33:16 -03
+Target: 360.otima.digital
+IPs found: 186.250.126.2 
+
+OPEN PORTS:
+80
+443
+
+VULNERABILITIES:

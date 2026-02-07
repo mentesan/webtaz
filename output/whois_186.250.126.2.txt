@@ -1,0 +1,34 @@
+inetnum:      186.0.0.0 - 186.255.255.255
+changed:      2007-09
+inetnum:     186.250.124.0/22
+aut-num:     AS262275
+owner:       J.A.S. TI - TECNOLOGIA DA INFORMACAO LTDA ME
+ownerid:     12.850.879/0001-40
+responsible: Otima Digital
+country:     BR
+owner-c:     OTDIG5
+created:     20120626
+changed:     20150319
+person:      Otima Digital
+e-mail:      bgp@otima.digital
+country:     BR
+created:     20230418
+changed:     20250625
+person:      Thiago Oliveira Silva
+e-mail:      bgp@otima.digital
+country:     BR
+created:     20070820
+changed:     20230418
+address:      12061 Bluemont Way
+address:      Reston VA 20190
+address:      United States of America (the)
+address:      12061 Bluemont Way
+address:      Reston VA 20190
+address:      United States of America (the)
+e-mail:       info@verisign-grs.com
+address:      12061 Bluemont Way
+address:      Reston VA 20190
+address:      United States of America (the)
+e-mail:       info@verisign-grs.com
+created:      1985-01-01
+changed:      2023-11-08

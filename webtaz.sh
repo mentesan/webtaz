@@ -1,21 +1,24 @@
-#!/usr/bin/bash
+#!/opt/homebrew/bin/bash
 # webtaz.sh
 # Fabio Almeida <mentesan@gmail.com>
 
 # Config options
 #PROXY=""
-PROXY="127.0.0.1:8082"  # Levave it blank if not used
+PROXY="127.0.0.1:8080"  # Levave it blank if not used
 USE_PROXY="true"
 USE_PROXY_CHAINS="true"
 PENTESTER_URL="https://evil.com"
 USER_AGENT="Mozilla/5.0"
 TRACEROUTE_PORT=443
 TRACEROUTE_MAX_PKTS=10
-SHCHECK_BIN="/home/micron/.local/bin/shcheck.py" # pip install shcheck
 WAPITI_OUTPUT_FMT="html"
 WAPITI_COOKIE_FILE="cookie.txt"
-NUCLEI_BIN="/home/micron/go/bin/nuclei"
+NUCLEI_BIN="/opt/homebrew/bin/nuclei"
 LOG_DIR_PREFIX="../outputs/"
+WHATWEB="/Users/fabioalmeida/.local/bin/whatweb"
+WAFW00F="/Users/fabioalmeida/.local/bin/wafw00f"
+PPMAP="/Users/fabioalmeida/tools/ppmap/ppmap"
+SHCHECK="/Users/fabioalmeida/.local/bin/shcheck.py"
 # ----------------------------
 # Do not edit bellow this line
 # ----------------------------
@@ -27,7 +30,7 @@ LOG_DIR_PREFIX="../outputs/"
 # ---
 #  strict chain
 #  [ProxyList]
-#  http    127.0.0.1       8082
+#  http    127.0.0.1       8082  # Proxy to Zap or BurpSuite or both chained
 # ---
 # Also, remember to add the found HTTP IPs to the ZAP Scope!
 #
@@ -197,15 +200,17 @@ run_nmap() {
 
 check_ssl() {
     # sslyze
-    echo -e "SSL Scan (sslyze)\n--"
-    SSLYZE_FILE="${LOG_DIR}/sslyze.txt"
-    if [ -s $SSLYZE_FILE ]; then
-        echo "Skipping sslscan, file already exists:"
-    else
-        sslyze  $DNS_NAME | sed '/^$/d' > $SSLYZE_FILE
+    if command -v sslyze &> /dev/null; then
+        echo -e "SSL Scan (sslyze)\n--"
+        SSLYZE_FILE="${LOG_DIR}/sslyze.txt"
+        if [ -s $SSLYZE_FILE ]; then
+            echo "Skipping sslscan, file already exists:"
+        else
+            sslyze  $DNS_NAME | sed '/^$/d' > $SSLYZE_FILE
+        fi
+        cat $SSLYZE_FILE
+        echo "-"
     fi
-    cat $SSLYZE_FILE
-    echo "-"
 
     # sslscan
     echo -e "SSL Scan (sslscan)\n--"
@@ -227,7 +232,7 @@ check_headers() {
         echo "Skipping headers check, file already exists:"
     else
         # No need to test, just execute with $PROXY_CHAINS empty if so
-        $PROXY_CHAINS -q $SHCHECK_BIN https://$DNS_NAME > $HEADERS_FILE
+        $PROXY_CHAINS -q $SHCHECK https://$DNS_NAME > $HEADERS_FILE
     fi
     cat $HEADERS_FILE
     echo "--"
@@ -240,7 +245,7 @@ get_technologies() {
     if [ -s $WHATWEB_FILE ]; then
         echo -e "Skipping whatweb, file already exists:\n-"
     else
-       whatweb -v -color=always --user-agent "$USER_AGENT" --no-errors https://$DNS_NAME > $WHATWEB_FILE
+       $WHATWEB -v -color=always --user-agent "$USER_AGENT" --no-errors https://$DNS_NAME > $WHATWEB_FILE
     fi
     cat $WHATWEB_FILE
     echo "--"
@@ -261,7 +266,7 @@ get_technologies() {
     if [ -s $WAF_FILE ]; then
         echo -e "Skipping waf analysis, file already exists:\n-"
     else
-        wafw00f $DNS_NAME > $WAF_FILE
+        $WAFW00F $DNS_NAME > $WAF_FILE
     fi
     cat $WAF_FILE
     echo "--"
@@ -337,7 +342,7 @@ check_vulns() {
     if [ -s $PP_FILE ]; then
         echo -e "Skipping PROTOTYPE POLLUTION checks, file already exists:\n-"
     else
-        echo $FETCHED_URLS | sed 's/ /\n/g' | ppmap &>> $PP_FILE
+        echo $FETCHED_URLS | sed 's/ /\n/g' | $PPMAP &>> $PP_FILE
     fi
     cat $PP_FILE
     echo "--"
@@ -367,7 +372,7 @@ check_osint() {
     # theHarvester
     echo -e "theHarvester OSINT tool.\nYou can configure api keys in /etc/theHarvester/api-keys.yaml to increase coverage...\n--"
     HARVESTER_FILE="${LOG_DIR}/theHarvester.json"
-    HARVESTER_SOURCES="anubis,baidu,bevigil,binaryedge,bing,bingapi,bufferoverun,censys,certspotter,crtsh,dnsdumpster,duckduckgo,fullhunt,github-code,hackertarget,hunter,intelx,omnisint,otx,pentesttools,projectdiscovery,qwant,rapiddns,rocketreach,securityTrails,sublist3r,threatcrowd,threatminer,urlscan,virustotal,yahoo,zoomeye"
+    HARVESTER_SOURCES="baidu,bevigil,bing,bingapi,bufferoverun,censys,certspotter,crtsh,dnsdumpster,duckduckgo,fullhunt,github-code,hackertarget,hunter,intelx,omnisint,otx,pentesttools,projectdiscovery,qwant,rapiddns,rocketreach,securityTrails,sublist3r,threatcrowd,threatminer,urlscan,virustotal,yahoo,zoomeye"
     HARVESTER_CMD="theHarvester -d $DOMAIN -n -c -r -f $HARVESTER_FILE -b $HARVESTER_SOURCES"
 
     if [ -s $HARVESTER_FILE ]; then
@@ -404,7 +409,9 @@ subdomain_map() {
 
 dns_lookup
 whois_lookup
-hping_traceroute
+if command -v hping3 &> /dev/null; then
+    hping_traceroute
+fi
 check_osint
 subdomain_map
 get_technologies
@@ -413,7 +420,9 @@ check_ssl
 check_headers
 fetch_urls
 check_vulns
-run_wapiti
+#if command -v wapiti &> /dev/null; then
+#    run_wapiti
+#fi
 #run_nikto
 #run_cewl
 #run_commix
