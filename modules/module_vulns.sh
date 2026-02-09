@@ -16,8 +16,8 @@ module_security_headers() {
     print_to_console "Analyzing security headers..."
     
     # Download headers
-    $PROXY_CHAINS curl -k -I "https://${TARGET}" 2>/dev/null > "${LOG_DIR}/security_headers_raw.txt"
-    run_tool "shcheck.py" "$PROXY_CHAINS -q $SHCHECK https://$TARGET"
+    proxychains curl -k -I "https://${TARGET}" 2>/dev/null > "${LOG_DIR}/security_headers_raw.txt"
+    run_tool "shcheck.py" "proxychains shcheck.py -d https://$TARGET"
 
     # Create formatted report
     {
@@ -55,22 +55,26 @@ module_vuln_scan() {
     for url in $FETCHED_URLS; do
         for payload in "${CRLF_PAYLOADS[@]}"; do
             test_url="${url}/${payload}"
-            run_tool "crlf_test" "$PROXY_CHAINS curl -k -s -o /dev/null -w '%{http_code}' '${test_url}' 2>&1 | \
-                grep -q \"< Set-Cookie: crlf\" && \
-                log 'FOUND \"CRLF in ${test_url}\" && \
-                print_to_console \"[!] CRLF: ${test_url}\" "
+            curl $CURL_PROXY -vs --max-time 9 $test_url 2>&1 | \
+                grep -q '< Set-Cookie: ?crlf' && \
+                echo "[+] is vulnerable with payload: $test_url" >> ${LOG_DIR}/crlf_test.txt || \
+                echo "[-] Not vulnerable: $test_url" >> ${LOG_DIR}/crlf_test.txt
         done
     done
 
     # PPMAP
-    for url in $FETCHED_URLS; do
-        run_tool "ppmap" "$PROXY_CHAINS ppmap_${url} echo $url | sed 's/ /\n/g' | $PPMAP"
-    done
-    
+    if [ -f ${LOG_DIR}/ppmap.txt ]; then
+        print_to_console "\n[i] PPMAP Results:\n$(cat ${LOG_DIR}/ppmap.txt)" 
+    else 
+        log "INFO" "Executing PPMAP for technology-specific vulnerabilities"
+        run_tool "ppmap" "cat ${LOG_DIR}/spider.txt | ppmap"
+    fi
     # Nuclei
-    if [ -n "${NUCLEI_BIN}" ] && [ -x "${NUCLEI_BIN}" ]; then
-        log "INFO" "Executing Nuclei (quick checks)"
-        run_tool "nuclei_quick" "$PROXY_CHAINS ${NUCLEI_BIN} -u https://${TARGET} -t http/technologies-detection.yaml -severity low,medium -silent"
+    if [ -f ${LOG_DIR}/nuclei_vuln.txt ]; then
+        print_to_console "\n[i] Nuclei Vulnerability Scan Results:\n$(cat ${LOG_DIR}/nuclei_vuln.txt)"
+    else
+        log "INFO" "Executing Nuclei"
+        run_tool "nuclei_vuln" "nuclei -u https://${TARGET} -silent -t http/cves -t http/misconfiguration -t http/vulnerabilities -t http/exposures"
     fi
 }
 
@@ -78,11 +82,11 @@ module_wapiti() {
     echo -e "Running Wapiti\n--"
     echo "Its recommended to run wapiti-getcookie, set WAPITI_COOKIE_FILE and run again"
     echo -e "EX: wapiti-getcookie -c cookie.txt -u https://${TARGET}/\n-"
-    WAPITI_CMD="wapiti --scope folder -S normal --color -d 10 -o $WAPITI_FILE \
-                    -f $WAPITI_OUTPUT_FMT -u https://${TARGET}/"
+    WAPITI_OPT="--scope folder -S normal --color -d 10 -f $WAPITI_OUTPUT_FMT -u https://${TARGET}/"
     # Setting proxy
-    [ $USE_PROXY == "true" ] && WAPITI_CMD="$WAPITI_CMD -p http://${PROXY}"
+    [ $USE_PROXY == "true" ] && WAPITI_OPT="$WAPITI_OPT -p http://${PROXY}"
     # Setting cookie
-    [ $WAPITI_COOKIE_FILE != "" ] && WAPITI_CMD="$WAPITI_CMD -c $WAPITI_COOKIE_FILE"
-    run_tool "wapiti" "$WAPITI_CMD"
+    [ $WAPITI_COOKIE_FILE != "" ] && WAPITI_OPT="$WAPITI_OPT -c $WAPITI_COOKIE_FILE"
+    run_tool "wapiti" "wapiti $WAPITI_OPT"
+    echo "COMMANDO: wapiti $WAPITI_OPT"
 }

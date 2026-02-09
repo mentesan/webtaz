@@ -40,14 +40,20 @@ module_hping() {
 
 module_subdomain() {
     print_to_console "\n>>> [ SUBDOMAINS - BASIC MODE ]"
-    
     # Uses simple crt.sh query for subdomains
     run_tool "subdomain_crtsh" "curl -k -s 'https://crt.sh/?q=%25.${TARGET}&output=json' | jq -r '.[].name_value' 2>/dev/null | sort -u"
     
     # Verify common subdomains
-    COMMON_SUBS="www mail ftp admin api test dev staging"
+    COMMON_SUBS="www mail ftp admin api test dev development dev1 dev2 dev-api dev-app dev-web devops \
+staging stage stg preprod pre-production preprod-api hmg homolog homologacao uatt uat qa qat test \
+testing testsrv sandbox lab lab01 lab02 ci cd cicd jenkins gitlab build builds artifacts intranet \
+internal int corp corporate vpn fw router gw proxy api api-dev api-staging api-qa api-test app app-dev \
+app-test web web-test db db-dev database mysql postgres redis cache files storage minio backup ti infra \
+security sec devteam support helpdesk tmp temp experimental exp beta alpha preview playground"
+
     for sub in $COMMON_SUBS; do
         host "${sub}.${TARGET}" 2>/dev/null | grep "has address" | tee -a "${LOG_DIR}/subdomains.txt"
+        host "${sub}-${TARGET}" 2>/dev/null | grep "has address" | tee -a "${LOG_DIR}/subdomains.txt"
     done
     
     # Sums up results
@@ -97,10 +103,10 @@ module_portscan() {
                 && [ ! -z $PROXY_CHAINS ]);
                 then
                     echo -e "Detailed scan for $ip port $port with Proxychains.\n-"
-                    run_tool "nmap http port" "sudo $PROXY_CHAINS -q $NMAP_CMD --script-args http.useragent=\"$USER_AGENT\""
+                    run_tool "nmap_http_port" "sudo $PROXY_CHAINS -q $NMAP_CMD --script-args http.useragent=\"$USER_AGENT\""
                 else
                     echo -e "Detailed scan for $ip port $port with direct connection (non HTTP port).\n-"
-                    run_tool "nmap direct port" "sudo $NMAP_CMD"
+                    run_tool "nmap_direct_port" "sudo $NMAP_CMD"
                 fi
                 echo "--"
             fi
@@ -115,27 +121,25 @@ module_tech_detection() {
     # WhatWeb
     run_tool "whatweb" "$PROX_CHAINS whatweb -v -color=never --no-errors https://${TARGET}"
     
-    # Wappalyzer local
-    run_tool "wappalyzer" "wappalyzer https://${TARGET} 2>/dev/null | jq . 2>/dev/null || echo 'JSON format not available'"
     # Header analysis
     print_to_console "\n[i] Detected Technologies in Headers:"
     curl -k -I "https://${TARGET}" 2>/dev/null | grep -iE "(server|x-powered-by|asp.net|php|wordpress|drupal|joomla)" | tee "${LOG_DIR}/tech_headers.txt"
     # Waf detection with wafw00f
-    run_tool "wafw00f" "$WAFW00F https://${TARGET}"
+    run_tool "wafw00f" "wafw00f https://${TARGET}"
+    echo "COMANDO WAFW00F: wafw0ff https://${TARGET}"
     # Fetch URLs
-    run_tool "spider" "https_proxy=$PROXY spider -v -u \"$USER_AGENT\" -s \
-            --domain  https://${TARGET} scrape 2>/dev/null \
-            | grep url | cut -d\" -f4)"
+    run_tool "spider" "spider --url ${TARGET} scrape 2>/dev/null | grep url | cut -d'\"' -f4"
 }
 
 module_osint() {
     # theHarvester
     echo -e "theHarvester OSINT tool.\nYou can configure api keys in /etc/theHarvester/api-keys.yaml to increase coverage...\n--"
-    HARVESTER_SOURCES="baidu,bevigil,bing,bingapi,bufferoverun,censys,certspotter,crtsh,dnsdumpster,duckduckgo,fullhunt,github-code,hackertarget,hunter,intelx,omnisint,otx,pentesttools,projectdiscovery,qwant,rapiddns,rocketreach,securityTrails,sublist3r,threatcrowd,threatminer,urlscan,virustotal,yahoo,zoomeye"
-    HARVESTER_CMD="theHarvester -d $TARGET -n -c -r -f $HARVESTER_FILE -b $HARVESTER_SOURCES"
-
-    run_tool "theHarvester" "$HARVESTER_CMD"
+#    #HARVESTER_SOURCES="baidu,bevigil,bufferoverun,censys,certspotter,crtsh,dnsdumpster,duckduckgo,fullhunt,github-code,hackertarget,hunter,intelx,omnisint,otx,pentesttools,projectdiscovery,qwant,rapiddns,rocketreach,securityTrails,sublist3r,threatcrowd,urlscan,virustotal,yahoo,zoomeye"
+    HARVESTER_SOURCES="baidu,certspotter,duckduckgo,hackertarget,otx,rapiddns,threatcrowd,urlscan,crtsh,yahoo"
+    HARVESTER_OPT="-d $TARGET -n -r -b $HARVESTER_SOURCES"
+    run_tool "theHarvester" "theHarvester $HARVESTER_OPT"
 
     # nuclei
-    run_tool "nuclei" "$NUCLEI_BIN -t http,ssl,misconfiguration,vulnerabilities,cves,file -u $TARGET -o $NUCLEI_FILE"
+    run_tool "nuclei_recon" "nuclei -u https://${TARGET}/ -silent -t http/technologies -t http/exposed-panels -t ssl -t dns/dns-waf-detect -t javascript/enumeration"
+    echo "COMMANDO: nuclei -u https://${TARGET}/ -silent -t http/technologies -t http/exposed-panels -t ssl -t dns/dns-waf-detect -t javascript/enumeration"
 }

@@ -22,15 +22,6 @@ else
     ENABLE_SUBDOMAIN_SCAN="false"
 fi
 
-# Tools paths (if not in PATH, specify full path here)
-[ -z NUCLEI_BIN ] && NUCLEI_BIN="$(which nuclei 2>/dev/null)"
-[ -z PPMAP ] && PPMAP="$(which ppmap 2>/dev/null)"  
-[ -z WHATWEB ] && WHATWEB="$(which whatweb 2>/dev/null)"
-[ -z WAFW00F ] && WAFW00F="$(which wafw00f 2>/dev/null)"
-[ -z SHCHECK ] && SHCHECK="$(which shcheck.py 2>/dev/null)"
-[ -z SPIDER ] && SPIDER="$(which spider 2>/dev/null)"
-[ -z GAU ] && GAU="$(which gau 2>/dev/null)"
-[ -z WAPPALYZER ] && WAPPALYZER="$(which wappalyzer 2>/dev/null)"
 # Proxy configuration
 [ $USE_PROXY == "true" ] && PROXY_CHAINS=$(which proxychains) || PROXY_CHAINS=""
 [ ! -z $PROXY ] && CURL_PROXY="-x http://${PROXY}" || CURL_PROXY=""
@@ -229,9 +220,8 @@ main() {
 
     # Validação básica
     if [ $# -lt 1 ]; then
-        echo "Uso: $0 <site or domain address> [--quick]" >&2
         echo "Ex:   $0 alvo.com.br" >&2
-        echo "      $0 alvo.com.br --quick   (only reconnaissance)" >&2
+        echo "      $0 --check" >&2
         exit 1
     fi
     
@@ -250,11 +240,10 @@ main() {
     log "INFO" "Initializing webtaz for: ${TARGET} (mode: ${MODE})"
     print_to_console "[ WEBTAZ v2 ] Target: ${TARGET}\n"
 
-
     MODULE_ORDER=(
         "module_recon"
-        "module_vulns"
         "module_ssl"
+        "module_vulns"
         "module_report"
     )
 
