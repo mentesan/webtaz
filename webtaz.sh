@@ -22,6 +22,14 @@ else
     ENABLE_SUBDOMAIN_SCAN="false"
 fi
 
+# Tools paths (if not in PATH, specify full path here)
+[ -z NUCLEI_BIN ] && NUCLEI_BIN="$(which nuclei 2>/dev/null)"
+[ -z PPMAP ] && PPMAP="$(which ppmap 2>/dev/null)"  
+[ -z WHATWEB ] && WHATWEB="$(which whatweb 2>/dev/null)"
+[ -z WAFW00F ] && WAFW00F="$(which wafw00f 2>/dev/null)"
+[ -z SHCHECK ] && SHCHECK="$(which shcheck.py 2>/dev/null)"
+[ -z SPIDER ] && SPIDER="$(which spider 2>/dev/null)"
+[ -z GAU ] && GAU="$(which gau 2>/dev/null)"
 # Proxy configuration
 [ $USE_PROXY == "true" ] && PROXY_CHAINS=$(which proxychains) || PROXY_CHAINS=""
 [ ! -z $PROXY ] && CURL_PROXY="-x http://${PROXY}" || CURL_PROXY=""
@@ -115,17 +123,17 @@ check_dependencies() {
     done
     
     # Verify sudo permissions
-    print_to_console "[i] Verifying sudo permissions for tools:"
-    for tool in "${SUDO_TOOLS[@]}"; do
-        if command -v "$tool" &>/dev/null; then
-            if sudo -l -U "$(whoami)" 2>/dev/null | grep -q "$tool"; then
-                print_to_console "  ${GREEN}✓${NC} $tool (sudo allowed)"
-            else
-                print_to_console "  ${YELLOW}⚠${NC} $tool (sudo may be necessary but not permitted)"
-                sudo_problems+=("$tool")
-            fi
-        fi
-    done
+    print_to_console "[i] Some tools need sudo permissions:"
+    #for tool in "${SUDO_TOOLS[@]}"; do
+    #    if command -v "$tool" &>/dev/null; then
+    #        if sudo -l -U "$(whoami)" 2>/dev/null | grep -q "$tool"; then
+    #            print_to_console "  ${GREEN}✓${NC} $tool (sudo allowed)"
+    #        else
+    #            print_to_console "  ${YELLOW}⚠${NC} $tool (sudo may be necessary but not permitted)"
+    #            sudo_problems+=("$tool")
+    #        fi
+    #    fi
+    #done
     
     # Summary of results
     print_to_console "\n${YELLOW}[*] VERIFICATION SUMMARY${NC}"
@@ -141,6 +149,8 @@ check_dependencies() {
     if [ ${#missing_optional[@]} -gt 0 ]; then
         print_to_console "\n${YELLOW}[!] Optional tools missing (modules will be disabled):${NC}"
         print_to_console "${RED} ${missing_optional[@]}${NC}"
+    else
+        print_to_console "\n${GREEN}[+] All optional tools are installed!${NC}"
     fi
     
     # Pause for confirmation if essentials are missing
