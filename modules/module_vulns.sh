@@ -57,7 +57,7 @@ module_vuln_scan() {
             test_url="${url}/${payload}"
             run_tool "crlf_test" "$PROXY_CHAINS curl -k -s -o /dev/null -w '%{http_code}' '${test_url}' 2>&1 | \
                 grep -q \"< Set-Cookie: crlf\" && \
-                log 'FOUND' \"CRLF in ${test_url}\" && \
+                log 'FOUND \"CRLF in ${test_url}\" && \
                 print_to_console \"[!] CRLF: ${test_url}\" "
         done
     done
@@ -65,6 +65,7 @@ module_vuln_scan() {
     # PPMAP
     for url in $FETCHED_URLS; do
         run_tool "ppmap" "$PROXY_CHAINS ppmap_${url} echo $url | sed 's/ /\n/g' | $PPMAP"
+    done
     
     # Nuclei
     if [ -n "${NUCLEI_BIN}" ] && [ -x "${NUCLEI_BIN}" ]; then
