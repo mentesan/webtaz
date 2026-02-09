@@ -8,7 +8,7 @@ module_report() {
     {
         echo "=== WEBTAZ - EXECUTION SUMMARY ==="
         echo "Date: $(date)"
-        echo "Target: ${TARGET_DOMAIN}"
+        echo "Target: ${TARGET}"
         echo "IPs found: $(tr '\n' ' ' < "${LOG_DIR}/dig_ips.txt" 2>/dev/null)"
         echo ""
         echo "OPEN PORTS:"

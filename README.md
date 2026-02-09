@@ -37,23 +37,19 @@ The script saves ouput from commands so if for some reason you get erros on some
 
 # What it does
 
-Given de DNS site name and domain, it runs tools against them, taking a web pentest starter approach.
+Given a site name it runs tools against them, taking a web pentest starter approach.
 
-Do not try to trick the script, it's not that smart yet!
-
-Proper execution:
+Verify dependencies:
 
 ```
-./webtaz.sh -t site.doman.com -d domain.com
+./webtaz.sh --check
 ```
 
-Not recommended execution
+Execution:
 
 ```
-./webtaz.sh -t site.domain.com -d otherdom.com   ### No anticipated behavior...
+./webtaz.sh site.com
 ```
-
-There's an "-i" option for passing target IP address but it's not tested for the time being.
 
 # Dependencies
 

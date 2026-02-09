@@ -16,8 +16,8 @@ module_security_headers() {
     print_to_console "Analyzing security headers..."
     
     # Download headers
-    $PROXY_CHAINS curl -k -I "https://${TARGET_DOMAIN}" 2>/dev/null > "${LOG_DIR}/security_headers_raw.txt"
-    run_tool "shcheck.py" "$PROXY_CHAINS -q $SHCHECK https://$TARGET_DOMAIN"
+    $PROXY_CHAINS curl -k -I "https://${TARGET}" 2>/dev/null > "${LOG_DIR}/security_headers_raw.txt"
+    run_tool "shcheck.py" "$PROXY_CHAINS -q $SHCHECK https://$TARGET"
 
     # Create formatted report
     {
@@ -69,16 +69,16 @@ module_vuln_scan() {
     # Nuclei
     if [ -n "${NUCLEI_BIN}" ] && [ -x "${NUCLEI_BIN}" ]; then
         log "INFO" "Executing Nuclei (quick checks)"
-        run_tool "nuclei_quick" "$PROXY_CHAINS ${NUCLEI_BIN} -u https://${TARGET_DOMAIN} -t http/technologies-detection.yaml -severity low,medium -silent"
+        run_tool "nuclei_quick" "$PROXY_CHAINS ${NUCLEI_BIN} -u https://${TARGET} -t http/technologies-detection.yaml -severity low,medium -silent"
     fi
 }
 
 module_wapiti() {
     echo -e "Running Wapiti\n--"
     echo "Its recommended to run wapiti-getcookie, set WAPITI_COOKIE_FILE and run again"
-    echo -e "EX: wapiti-getcookie -c cookie.txt -u https://${DNS_NAME}/\n-"
+    echo -e "EX: wapiti-getcookie -c cookie.txt -u https://${TARGET}/\n-"
     WAPITI_CMD="wapiti --scope folder -S normal --color -d 10 -o $WAPITI_FILE \
-                    -f $WAPITI_OUTPUT_FMT -u https://${DNS_NAME}/"
+                    -f $WAPITI_OUTPUT_FMT -u https://${TARGET}/"
     # Setting proxy
     [ $USE_PROXY == "true" ] && WAPITI_CMD="$WAPITI_CMD -p http://${PROXY}"
     # Setting cookie

@@ -30,6 +30,7 @@ fi
 [ -z SHCHECK ] && SHCHECK="$(which shcheck.py 2>/dev/null)"
 [ -z SPIDER ] && SPIDER="$(which spider 2>/dev/null)"
 [ -z GAU ] && GAU="$(which gau 2>/dev/null)"
+[ -z WAPPALYZER ] && WAPPALYZER="$(which wappalyzer 2>/dev/null)"
 # Proxy configuration
 [ $USE_PROXY == "true" ] && PROXY_CHAINS=$(which proxychains) || PROXY_CHAINS=""
 [ ! -z $PROXY ] && CURL_PROXY="-x http://${PROXY}" || CURL_PROXY=""
@@ -169,7 +170,7 @@ check_dependencies() {
 # =========================
 # FUNÇÕES DE CORE & LOGGING
 # =========================
-LOG_DIR="${LOG_DIR_PREFIX}${TARGET_DOMAIN}"
+LOG_DIR="${LOG_DIR_PREFIX}${TARGET}"
 GLOBAL_LOG="${LOG_DIR}/webtaz.log"
 
 init_logging() {
@@ -234,7 +235,7 @@ main() {
         exit 1
     fi
     
-    TARGET_DOMAIN="$1"
+    TARGET="$1"
     MODE="full"
     [ "$2" = "--quick" ] && MODE="quick"
     
@@ -246,8 +247,8 @@ main() {
     # Pause for user to see the dependency check
     sleep 2
 
-    log "INFO" "Initializing webtaz for: ${TARGET_DOMAIN} (mode: ${MODE})"
-    print_to_console "[ WEBTAZ v2 ] Target: ${TARGET_DOMAIN}\n"
+    log "INFO" "Initializing webtaz for: ${TARGET} (mode: ${MODE})"
+    print_to_console "[ WEBTAZ v2 ] Target: ${TARGET}\n"
 
 
     MODULE_ORDER=(
@@ -301,13 +302,13 @@ main() {
 
     if [ "${MODE}" = "full" ]; then
         # Array of URLs for testing
-        TEST_URLS=("https://${TARGET_DOMAIN}" "http://${TARGET_DOMAIN}")
+        TEST_URLS=("https://${TARGET}" "http://${TARGET}")
         
         load_and_execute_modules
     fi
 
     print_to_console "\n[+] Done! Logs: ${LOG_DIR}"
-    log "SUCCESS" "Finished execution for ${TARGET_DOMAIN}"
+    log "SUCCESS" "Finished execution for ${TARGET}"
 }
 
 # Entry point
