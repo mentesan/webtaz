@@ -1,4 +1,0 @@
-[proxychains] config file found: /opt/homebrew/etc/proxychains.conf
-[proxychains] preloading /opt/homebrew/Cellar/proxychains-ng/4.17/lib/libproxychains4.dylib
-80
-443

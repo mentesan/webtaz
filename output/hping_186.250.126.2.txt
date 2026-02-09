@@ -1,1 +1,0 @@
-sudo: hping3: command not found

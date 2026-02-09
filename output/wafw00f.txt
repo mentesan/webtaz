@@ -1,3 +1,0 @@
-[proxychains] config file found: /opt/homebrew/etc/proxychains.conf
-[proxychains] preloading /opt/homebrew/Cellar/proxychains-ng/4.17/lib/libproxychains4.dylib
-proxychains: can't load process '/Users/fabioalmeida/.local/bin/wafw00f'. (hint: it's probably a typo): No such file or directory

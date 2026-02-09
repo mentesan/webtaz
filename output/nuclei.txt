@@ -1,1 +1,0 @@
-./webtaz2.sh: linha 196: -t: comando não encontrado

@@ -1,1 +1,0 @@
-./webtaz2.sh: /Users/fabioalmeida/.local/bin/whatweb: /Users/fabioalmeida/.local/pipx/venvs/whatweb/bin/python: interpretador incorreto: No such file or directory
