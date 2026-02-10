@@ -4,6 +4,7 @@
 module_vulns() {
     module_security_headers
     module_vuln_scan
+    module_nuclei
     module_wapiti
 }
 
@@ -69,12 +70,19 @@ module_vuln_scan() {
         log "INFO" "Executing PPMAP for technology-specific vulnerabilities"
         run_tool "ppmap" "cat ${LOG_DIR}/spider.txt | ppmap"
     fi
+}
+
+module_nuclei() {
+    # Setting proxy
+    [ $USE_PROXY == "true" ] && NUCLEI_OPT="$NUCLEI_OPT -p http://${PROXY}"
+    # Setting cookie
+    [ $NUCLEI_COOKIE_FILE != "" ] && NUCLEI_OPT="$NUCLEI_OPT -H \"$(cat $NUCLEI_COOKIE_FILE)\""
     # Nuclei
     if [ -f ${LOG_DIR}/nuclei_vuln.txt ]; then
         print_to_console "\n[i] Nuclei Vulnerability Scan Results:\n$(cat ${LOG_DIR}/nuclei_vuln.txt)"
     else
         log "INFO" "Executing Nuclei"
-        run_tool "nuclei_vuln" "nuclei -u https://${TARGET} -silent -t http/cves -t http/misconfiguration -t http/vulnerabilities -t http/exposures"
+        run_tool "nuclei_vuln" "nuclei -u https://${TARGET} -silent -t http/cves -t http/misconfiguration -t http/vulnerabilities -t http/exposures -t javascript/enumeration"
     fi
 }
 
@@ -82,7 +90,8 @@ module_wapiti() {
     echo -e "Running Wapiti\n--"
     echo "Its recommended to run wapiti-getcookie, set WAPITI_COOKIE_FILE and run again"
     echo -e "EX: wapiti-getcookie -c cookie.txt -u https://${TARGET}/\n-"
-    WAPITI_OPT="--scope folder -S normal --color -d 10 -f $WAPITI_OUTPUT_FMT -u https://${TARGET}/"
+    [ -e .wapiti ] || mkdir .wapiti
+    WAPITI_OPT="--scope folder -S normal --color -d 10 -f $WAPITI_OUTPUT_FMT -o .wapiti -u https://${TARGET}/"
     # Setting proxy
     [ $USE_PROXY == "true" ] && WAPITI_OPT="$WAPITI_OPT -p http://${PROXY}"
     # Setting cookie

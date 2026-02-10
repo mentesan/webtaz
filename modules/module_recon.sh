@@ -139,7 +139,15 @@ module_osint() {
     HARVESTER_OPT="-d $TARGET -n -r -b $HARVESTER_SOURCES"
     run_tool "theHarvester" "theHarvester $HARVESTER_OPT"
 
-    # nuclei
-    run_tool "nuclei_recon" "nuclei -u https://${TARGET}/ -silent -t http/technologies -t http/exposed-panels -t ssl -t dns/dns-waf-detect -t javascript/enumeration"
-    echo "COMMANDO: nuclei -u https://${TARGET}/ -silent -t http/technologies -t http/exposed-panels -t ssl -t dns/dns-waf-detect -t javascript/enumeration"
+    # Setting proxy
+    [ $USE_PROXY == "true" ] && NUCLEI_OPT="$NUCLEI_OPT -p http://${PROXY}"
+    # Setting cookie
+    [ $NUCLEI_COOKIE_FILE != "" ] && NUCLEI_OPT="$NUCLEI_OPT -H \"$(cat $NUCLEI_COOKIE_FILE)\""
+    # Nuclei
+    if [ -f ${LOG_DIR}/nuclei_vuln.txt ]; then
+        print_to_console "\n[i] Nuclei Recon Results:\n$(cat ${LOG_DIR}/nuclei_recon.txt)"
+    else
+        log "INFO" "Executing Nuclei"
+        run_tool "nuclei_recon" "nuclei -u https://${TARGET}/ -silent -t http/technologies -t http/exposed-panels -t ssl -t dns/dns-waf-detect"
+    fi
 }
