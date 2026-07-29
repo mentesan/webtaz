@@ -115,6 +115,7 @@ cargo install spider_cli
 
 - [one liner cors check](https://github.com/kleiton0x00/CORS-one-liner)
 - [one liner crlf check](https://github.com/kleiton0x00/CRLF-one-liner)
+- [Darkmoon](https://github.com/ASCIT31/Dark-Moon) - Open source (GPL-3.0) autonomous AI penetration testing platform covering web, API, Active Directory and Kubernetes, with proof of exploitation.
 - [ppmap](https://github.com/kleiton0x00/ppmap) search for prototype pollution flaws
 
 # Web scanners
